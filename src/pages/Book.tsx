@@ -24,9 +24,9 @@ export function Book() {
           the clinic directly.
         </p>
         <div className="mt-6 flex justify-center">
-          <Button href={`tel:${clinic.contact.phone}`} variant="outline">
+          <Button href={`tel:${clinic.contact.phonePrimary}`} variant="outline">
             <Phone className="h-4 w-4" />
-            Call {clinic.contact.phone}
+            Call {clinic.contact.phones[0]}
           </Button>
         </div>
       </div>

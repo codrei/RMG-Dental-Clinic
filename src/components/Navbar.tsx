@@ -18,10 +18,8 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <Container className="flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 font-serif text-lg font-semibold text-foreground">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-fg">
-            {clinic.shortName.charAt(0)}
-          </span>
-          {clinic.name}
+          <img src={clinic.logo.icon} alt="" className="h-9 w-auto logo-blend" />
+          <span>{clinic.name}</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

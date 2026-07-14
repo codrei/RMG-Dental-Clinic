@@ -28,7 +28,7 @@ export function Home() {
             <Eyebrow>{clinic.tagline}</Eyebrow>
             <h1 className="mt-5 text-4xl font-semibold sm:text-5xl lg:text-6xl">
               A healthier smile,{' '}
-              <span className="text-primary">without the wait.</span>
+              <span className="text-accent-ink">without the wait.</span>
             </h1>
             <p className="mt-5 max-w-md text-lg text-muted-foreground">
               Book your dental appointment online in under a minute. Choose a
@@ -39,7 +39,7 @@ export function Home() {
                 <CalendarDays className="h-4 w-4" />
                 Book an appointment
               </Button>
-              <Button href={`tel:${clinic.contact.phone}`} variant="outline">
+              <Button href={`tel:${clinic.contact.phonePrimary}`} variant="outline">
                 <Phone className="h-4 w-4" />
                 Call the clinic
               </Button>
@@ -50,17 +50,19 @@ export function Home() {
             </div>
           </div>
 
-          {/* Dentist photo slot (placeholder until the real photo is added) */}
+          {/* Dentist photo */}
           <div className="relative mx-auto w-full max-w-md">
-            <div className="aspect-[4/5] overflow-hidden rounded-3xl border border-border bg-primary-soft">
-              <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center text-primary/70">
-                <Stethoscope className="h-12 w-12" />
-                <span className="px-6 text-sm font-medium">Photo of {clinic.dentist.name} goes here</span>
-              </div>
+            <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-accent/20" aria-hidden="true" />
+            <div className="aspect-[4/5] overflow-hidden rounded-3xl border border-border bg-primary-soft shadow-sm">
+              <img
+                src={clinic.dentist.photo}
+                alt={`${clinic.dentist.name}, ${clinic.dentist.credentials}`}
+                className="h-full w-full object-cover object-top"
+              />
             </div>
             <div className="absolute -bottom-5 -left-5 hidden rounded-2xl border border-border bg-surface px-5 py-4 shadow-sm sm:block">
-              <div className="text-2xl font-semibold text-primary">10+ yrs</div>
-              <div className="text-xs text-muted-foreground">caring for local smiles</div>
+              <div className="text-lg font-semibold text-primary">{clinic.dentist.credentials}</div>
+              <div className="text-xs text-muted-foreground">{clinic.dentist.license}</div>
             </div>
           </div>
         </Container>

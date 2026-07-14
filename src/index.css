@@ -12,32 +12,34 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
 
-  /* Clinical teal — calm, trustworthy, medical without being cold. */
+  /* Brand navy — pulled from the RMG logo (wordmark + tooth). */
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-fg: var(--primary-fg);
   --color-primary-soft: var(--primary-soft);
 
-  /* Warm accent used sparingly for highlights / secondary CTAs. */
+  /* Sky blue — the logo's swoosh / "Clinic" accent. */
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
 }
 
 :root {
-  --background: #f5f9f9;   /* cool soft white */
+  --background: #f3f7fb;   /* cool soft blue-white */
   --surface: #ffffff;
-  --foreground: #14201f;   /* deep slate-teal ink */
-  --muted: #eef4f4;
-  --muted-foreground: #5b6b6a;
-  --border: #dde8e7;
+  --foreground: #17233f;   /* deep brand navy ink */
+  --muted: #e9f0f7;
+  --muted-foreground: #566579;
+  --border: #dbe6f1;
 
-  --primary: #0f766e;       /* deep clinical teal */
-  --primary-hover: #0b5a54;
+  --primary: #26365f;       /* logo navy */
+  --primary-hover: #1b2846;
   --primary-fg: #ffffff;
-  --primary-soft: #e4f1ef;  /* mint tint surface */
+  --primary-soft: #e8eef7;  /* light navy tint surface */
 
-  --accent: #d98b5f;        /* warm terracotta-sand, used sparingly */
-  --accent-soft: #f8ede4;
+  --accent: #55b4d4;        /* logo sky blue (fills / decoration) */
+  --accent-soft: #e3f2f9;   /* sky tint surface */
+  --accent-ink: #1f6d8c;    /* readable sky for text/icons */
 }
 
 body {
@@ -63,6 +65,11 @@ h1, h2, h3, h4 {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Logos supplied on a white background sit cleanly on light surfaces */
+.logo-blend {
+  mix-blend-mode: multiply;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -49,8 +49,8 @@ export function Button({
 
 export function Eyebrow({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-      <span className="h-px w-6 bg-primary/50" aria-hidden="true" />
+    <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-accent-ink">
+      <span className="h-px w-6 bg-accent" aria-hidden="true" />
       {children}
     </span>
   );
