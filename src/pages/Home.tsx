@@ -1,0 +1,140 @@
+import { Link } from 'react-router-dom';
+import {
+  CalendarDays,
+  Phone,
+  ShieldCheck,
+  HeartHandshake,
+  Clock,
+  Stethoscope,
+  ArrowRight,
+} from 'lucide-react';
+import { Container, Button, Eyebrow } from '../components/ui';
+import { clinic } from '../config/clinic';
+
+const trust = [
+  { icon: HeartHandshake, title: 'Gentle, unhurried care', body: 'Comfort-first treatment for nervous and first-time patients.' },
+  { icon: ShieldCheck, title: 'Clean & modern', body: 'Strict sterilisation and up-to-date equipment.' },
+  { icon: Clock, title: 'Book in seconds', body: 'Pick a time online — no phone tag, confirmed by the clinic.' },
+];
+
+export function Home() {
+  return (
+    <>
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-primary-soft blur-3xl" aria-hidden="true" />
+        <Container className="relative grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-2">
+          <div>
+            <Eyebrow>{clinic.tagline}</Eyebrow>
+            <h1 className="mt-5 text-4xl font-semibold sm:text-5xl lg:text-6xl">
+              A healthier smile,{' '}
+              <span className="text-primary">without the wait.</span>
+            </h1>
+            <p className="mt-5 max-w-md text-lg text-muted-foreground">
+              Book your dental appointment online in under a minute. Choose a
+              time that works for you and we&apos;ll confirm it right away.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button to="/book">
+                <CalendarDays className="h-4 w-4" />
+                Book an appointment
+              </Button>
+              <Button href={`tel:${clinic.contact.phone}`} variant="outline">
+                <Phone className="h-4 w-4" />
+                Call the clinic
+              </Button>
+            </div>
+            <div className="mt-8 flex items-center gap-3 text-sm text-muted-foreground">
+              <Stethoscope className="h-5 w-5 text-primary" />
+              Cared for by <span className="font-semibold text-foreground">{clinic.dentist.name}, {clinic.dentist.credentials}</span>
+            </div>
+          </div>
+
+          {/* Dentist photo slot (placeholder until the real photo is added) */}
+          <div className="relative mx-auto w-full max-w-md">
+            <div className="aspect-[4/5] overflow-hidden rounded-3xl border border-border bg-primary-soft">
+              <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center text-primary/70">
+                <Stethoscope className="h-12 w-12" />
+                <span className="px-6 text-sm font-medium">Photo of {clinic.dentist.name} goes here</span>
+              </div>
+            </div>
+            <div className="absolute -bottom-5 -left-5 hidden rounded-2xl border border-border bg-surface px-5 py-4 shadow-sm sm:block">
+              <div className="text-2xl font-semibold text-primary">10+ yrs</div>
+              <div className="text-xs text-muted-foreground">caring for local smiles</div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Trust strip */}
+      <section className="border-y border-border bg-surface">
+        <Container className="grid gap-8 py-12 sm:grid-cols-3">
+          {trust.map((t) => (
+            <div key={t.title} className="flex gap-4">
+              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
+                <t.icon className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-serif text-lg font-semibold">{t.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{t.body}</p>
+              </div>
+            </div>
+          ))}
+        </Container>
+      </section>
+
+      {/* Services preview */}
+      <section className="py-20">
+        <Container>
+          <div className="flex items-end justify-between gap-6">
+            <div>
+              <Eyebrow>What we do</Eyebrow>
+              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Our dental services</h2>
+            </div>
+            <Link to="/services" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline sm:inline-flex">
+              View all <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {clinic.services.slice(0, 6).map((s) => (
+              <div
+                key={s.slug}
+                className="group rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-primary"
+              >
+                <h3 className="font-serif text-lg font-semibold">{s.name}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{s.description}</p>
+                <Link
+                  to="/book"
+                  className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100"
+                >
+                  Book this <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Closing CTA */}
+      <section className="pb-20">
+        <Container>
+          <div className="overflow-hidden rounded-3xl bg-primary px-8 py-14 text-center text-primary-fg sm:px-16">
+            <h2 className="mx-auto max-w-2xl text-3xl font-semibold text-primary-fg sm:text-4xl">
+              Ready to see us? Book your visit today.
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg text-primary-fg/80">
+              Choose a time online and we&apos;ll confirm your appointment. It only takes a minute.
+            </p>
+            <div className="mt-8 flex justify-center">
+              <Button to="/book" className="bg-surface text-primary hover:bg-white">
+                <CalendarDays className="h-4 w-4" />
+                Book an appointment
+              </Button>
+            </div>
+          </div>
+        </Container>
+      </section>
+    </>
+  );
+}
