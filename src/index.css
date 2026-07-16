@@ -77,10 +77,40 @@ body {
   mix-blend-mode: multiply;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+/* Animations run for everyone by design: OS "performance mode" flips the
+   reduced-motion flag for users who never chose it, and this site's motion
+   is gentle (soft fades and small lifts) — nothing vestibular. */
+
+/* Scroll-reveal: elements fade/lift in on every viewport entry (both scroll
+   directions). Toggled by IntersectionObserver in components/Reveal.tsx. */
+@layer components {
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* One-time entrance for the hero on page load */
+  .rise-in {
+    animation: rise-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--rise-delay, 0ms);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

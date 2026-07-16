@@ -8,7 +8,9 @@ import {
   Stethoscope,
   ArrowRight,
 } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import { Container, Button, Eyebrow } from '../components/ui';
+import { Reveal } from '../components/Reveal';
 import { clinic } from '../config/clinic';
 
 const trust = [
@@ -24,7 +26,7 @@ export function Home() {
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-primary-soft blur-3xl" aria-hidden="true" />
         <Container className="relative grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-2">
-          <div>
+          <div className="rise-in">
             <Eyebrow>{clinic.tagline}</Eyebrow>
             <h1 className="mt-5 text-4xl font-semibold sm:text-5xl lg:text-6xl">
               A healthier smile,{' '}
@@ -51,7 +53,10 @@ export function Home() {
           </div>
 
           {/* Dentist photo */}
-          <div className="relative mx-auto w-full max-w-md">
+          <div
+            className="rise-in relative mx-auto w-full max-w-md"
+            style={{ '--rise-delay': '160ms' } as CSSProperties}
+          >
             <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-accent/20" aria-hidden="true" />
             <div className="aspect-[4/5] overflow-hidden rounded-3xl border border-border bg-primary-soft shadow-sm">
               <img
@@ -71,8 +76,8 @@ export function Home() {
       {/* Trust strip */}
       <section className="border-y border-border bg-surface">
         <Container className="grid gap-8 py-12 sm:grid-cols-3">
-          {trust.map((t) => (
-            <div key={t.title} className="flex gap-4">
+          {trust.map((t, i) => (
+            <Reveal key={t.title} delay={i * 110} className="flex gap-4">
               <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
                 <t.icon className="h-5 w-5" />
               </div>
@@ -80,7 +85,7 @@ export function Home() {
                 <h3 className="font-serif text-lg font-semibold">{t.title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{t.body}</p>
               </div>
-            </div>
+            </Reveal>
           ))}
         </Container>
       </section>
@@ -88,31 +93,32 @@ export function Home() {
       {/* Services preview */}
       <section className="py-20">
         <Container>
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <Eyebrow>What we do</Eyebrow>
-              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Our dental services</h2>
+          <Reveal>
+            <div className="flex items-end justify-between gap-6">
+              <div>
+                <Eyebrow>What we do</Eyebrow>
+                <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Our dental services</h2>
+              </div>
+              <Link to="/services" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline sm:inline-flex">
+                View all <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
-            <Link to="/services" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline sm:inline-flex">
-              View all <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+          </Reveal>
 
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {clinic.services.slice(0, 6).map((s) => (
-              <div
-                key={s.slug}
-                className="group rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-primary"
-              >
-                <h3 className="font-serif text-lg font-semibold">{s.name}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{s.description}</p>
-                <Link
-                  to="/book"
-                  className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100"
-                >
-                  Book this <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
+            {clinic.services.slice(0, 6).map((s, i) => (
+              <Reveal key={s.slug} delay={(i % 3) * 90}>
+                <div className="group h-full rounded-2xl border border-border bg-surface p-6 transition-all hover:-translate-y-1 hover:border-primary hover:shadow-md">
+                  <h3 className="font-serif text-lg font-semibold">{s.name}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{s.description}</p>
+                  <Link
+                    to="/book"
+                    className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    Book this <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </Reveal>
             ))}
           </div>
         </Container>
@@ -121,6 +127,7 @@ export function Home() {
       {/* Closing CTA */}
       <section className="pb-20">
         <Container>
+          <Reveal>
           <div className="relative overflow-hidden rounded-3xl bg-primary px-8 py-14 text-center sm:px-16">
             {/* soft sky glow, echoing the logo's swoosh */}
             <div
@@ -146,6 +153,7 @@ export function Home() {
               </div>
             </div>
           </div>
+          </Reveal>
         </Container>
       </section>
     </>
