@@ -60,21 +60,24 @@ export function Contact() {
         </div>
 
         {/* Map */}
-        <div className="min-h-[320px] overflow-hidden rounded-2xl border border-border bg-muted">
-          {clinic.contact.mapEmbedUrl ? (
+        <div className="flex flex-col gap-3">
+          <div className="min-h-[320px] flex-1 overflow-hidden rounded-2xl border border-border bg-muted">
             <iframe
-              title="Clinic location"
+              title="RMG Dental Clinic on Google Maps"
               src={clinic.contact.mapEmbedUrl}
-              className="h-full w-full"
+              className="h-full min-h-[320px] w-full"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-          ) : (
-            <div className="flex h-full min-h-[320px] flex-col items-center justify-center gap-2 text-center text-muted-foreground">
-              <MapPin className="h-10 w-10 text-accent-ink/50" />
-              <span className="px-6 text-sm">Google Map of the clinic goes here</span>
-            </div>
-          )}
+          </div>
+          <a
+            href={clinic.contact.mapShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 self-start text-sm font-semibold text-accent-ink hover:underline"
+          >
+            <MapPin className="h-4 w-4" /> Open in Google Maps for directions
+          </a>
         </div>
       </div>
     </Container>

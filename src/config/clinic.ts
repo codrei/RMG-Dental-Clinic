@@ -58,8 +58,12 @@ export const clinic = {
     facebook: 'https://www.facebook.com/profile.php?id=100054419234074',
     addressLine:
       'Ground Floor, Manguiat Building, General Luna Street, Pilahan Sabang, Lipa City, 4217, Batangas',
-    // Google Maps embed src — from Maps → Share → Embed a map (added in polish step).
-    mapEmbedUrl: '',
+    // Keyless Google Maps embed centered on the clinic's own listing
+    // (place: "RMG Dental Clinic", General Luna St, Lipa City).
+    mapEmbedUrl:
+      'https://www.google.com/maps?q=RMG+Dental+Clinic,+General+Luna+Street,+Lipa+City,+Batangas&ll=13.9527807,121.1658816&z=17&output=embed',
+    // Link for "open in Google Maps" (the clinic's listing)
+    mapShareUrl: 'https://maps.app.goo.gl/jzwapQPmx2ryFL6z6',
   },
 
   // Working hours drive which booking slots are offered.
