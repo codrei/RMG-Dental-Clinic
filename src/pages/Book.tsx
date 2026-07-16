@@ -171,11 +171,13 @@ export function Book() {
 
   return (
     <Container className="py-16">
-      <Eyebrow>Online booking</Eyebrow>
-      <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">Book an appointment</h1>
-      <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-        Three quick steps — pick a service, choose a time, tell us who you are.
-      </p>
+      <div className="rise-in">
+        <Eyebrow>Online booking</Eyebrow>
+        <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">Book an appointment</h1>
+        <p className="mt-4 max-w-xl text-lg text-muted-foreground">
+          Three quick steps — pick a service, choose a time, tell us who you are.
+        </p>
+      </div>
 
       {/* Step indicator */}
       <ol className="mt-8 flex items-center gap-2 text-xs font-semibold">

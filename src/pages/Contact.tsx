@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 import { MapPin, Phone, Mail, Clock, Globe } from 'lucide-react';
 import { Container, Button, Eyebrow } from '../components/ui';
+import { Reveal } from '../components/Reveal';
 import { clinic } from '../config/clinic';
 import { groupedHours } from '../lib/hours';
 
@@ -9,14 +10,16 @@ export function Contact() {
 
   return (
     <Container className="py-16">
-      <Eyebrow>Get in touch</Eyebrow>
-      <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">Visit the clinic</h1>
-      <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-        Drop by, give us a call, or book online — whatever&apos;s easiest for you.
-      </p>
+      <div className="rise-in">
+        <Eyebrow>Get in touch</Eyebrow>
+        <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">Visit the clinic</h1>
+        <p className="mt-4 max-w-xl text-lg text-muted-foreground">
+          Drop by, give us a call, or book online — whatever&apos;s easiest for you.
+        </p>
+      </div>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-2">
-        <div className="space-y-6">
+        <Reveal className="space-y-6">
           <ContactRow icon={MapPin} label="Address">{clinic.contact.addressLine}</ContactRow>
 
           <ContactRow icon={Phone} label="Phone">
@@ -63,10 +66,10 @@ export function Contact() {
           </div>
 
           <Button to="/book">Book an appointment</Button>
-        </div>
+        </Reveal>
 
         {/* Map */}
-        <div className="flex flex-col gap-3">
+        <Reveal delay={120} className="flex flex-col gap-3">
           <div className="min-h-[320px] flex-1 overflow-hidden rounded-2xl border border-border bg-muted">
             <iframe
               title="RMG Dental Clinic on Google Maps"
@@ -84,7 +87,7 @@ export function Contact() {
           >
             <MapPin className="h-4 w-4" /> Open in Google Maps for directions
           </a>
-        </div>
+        </Reveal>
       </div>
     </Container>
   );
