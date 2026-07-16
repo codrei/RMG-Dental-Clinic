@@ -4,19 +4,17 @@ import { Container, Button, Eyebrow } from '../components/ui';
 import { clinic, type Service } from '../config/clinic';
 import { firebaseReady } from '../lib/firebase';
 import { formatTime } from '../lib/hours';
+import { Calendar } from '../components/Calendar';
 import {
   createBooking,
   fetchDaysOff,
   fetchTakenTimes,
   possibleStartTimes,
   toDateKey,
-  upcomingOpenDays,
 } from '../lib/booking';
 
 type Step = 'service' | 'schedule' | 'details' | 'done';
 
-const dayLabel = new Intl.DateTimeFormat('en-PH', { weekday: 'short' });
-const dateLabel = new Intl.DateTimeFormat('en-PH', { month: 'short', day: 'numeric' });
 const longDate = new Intl.DateTimeFormat('en-PH', { weekday: 'long', month: 'long', day: 'numeric' });
 
 export function Book() {
@@ -39,7 +37,6 @@ export function Book() {
   useEffect(() => {
     fetchDaysOff().then(setDaysOff).catch(() => {});
   }, []);
-  const days = useMemo(() => upcomingOpenDays(14, daysOff), [daysOff]);
 
   // Load taken times whenever the selected date changes.
   useEffect(() => {
@@ -245,74 +242,69 @@ export function Book() {
             <ChevronLeft className="h-4 w-4" /> {service.name}
           </button>
 
-          <h2 className="mt-5 font-serif text-xl font-semibold">Pick a day</h2>
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-            {days.map((d) => {
-              const selected = date && toDateKey(d) === toDateKey(date);
-              return (
-                <button
-                  key={d.toISOString()}
-                  onClick={() => setDate(d)}
-                  className={`flex min-w-[4.5rem] flex-col items-center rounded-xl border px-3 py-2.5 transition-colors ${
-                    selected ? 'border-primary bg-primary text-primary-fg' : 'border-border bg-surface hover:border-primary'
-                  }`}
-                >
-                  <span className={`text-xs font-semibold ${selected ? 'text-primary-fg/80' : 'text-muted-foreground'}`}>
-                    {dayLabel.format(d)}
-                  </span>
-                  <span className="mt-0.5 text-sm font-bold">{dateLabel.format(d)}</span>
-                </button>
-              );
-            })}
-          </div>
+          <div className="mt-6 grid gap-8 lg:grid-cols-[auto_1fr]">
+            {/* Real month calendar */}
+            <div>
+              <h2 className="font-serif text-xl font-semibold">Pick a day</h2>
+              <div className="mt-3">
+                <Calendar selected={date} onSelect={setDate} daysOff={daysOff} />
+              </div>
+            </div>
 
-          {date && (
-            <>
-              <h2 className="mt-7 font-serif text-xl font-semibold">Pick a time</h2>
-              {loadingSlots ? (
-                <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+            {/* Time slots for the chosen day */}
+            <div>
+              <h2 className="font-serif text-xl font-semibold">Pick a time</h2>
+              {!date ? (
+                <p className="mt-3 text-sm text-muted-foreground">Choose a day on the calendar first.</p>
+              ) : loadingSlots ? (
+                <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" /> Checking available times…
                 </div>
-              ) : slots.length === 0 ? (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  No times available that day — try another date.
-                </p>
               ) : (
-                <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-7">
-                  {slots.map((s) => (
-                    <button
-                      key={s.time}
-                      disabled={s.taken}
-                      onClick={() => setTime(s.time)}
-                      className={`rounded-lg border px-2 py-2.5 text-sm font-semibold transition-colors ${
-                        s.taken
-                          ? 'cursor-not-allowed border-border bg-muted text-muted-foreground/40 line-through'
-                          : time === s.time
-                            ? 'border-primary bg-primary text-primary-fg'
-                            : 'border-border bg-surface hover:border-primary'
-                      }`}
-                    >
-                      {formatTime(s.time)}
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <p className="mt-1.5 text-sm text-muted-foreground">{longDate.format(date)}</p>
+                  {slots.length === 0 ? (
+                    <p className="mt-4 text-sm text-muted-foreground">
+                      No times available that day — try another date.
+                    </p>
+                  ) : (
+                    <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4 xl:grid-cols-5">
+                      {slots.map((s) => (
+                        <button
+                          key={s.time}
+                          disabled={s.taken}
+                          onClick={() => setTime(s.time)}
+                          className={`rounded-lg border px-2 py-2.5 text-sm font-semibold transition-colors ${
+                            s.taken
+                              ? 'cursor-not-allowed border-border bg-muted text-muted-foreground/40 line-through'
+                              : time === s.time
+                                ? 'border-primary bg-primary text-primary-fg'
+                                : 'border-border bg-surface hover:border-primary'
+                          }`}
+                        >
+                          {formatTime(s.time)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
+            </div>
+          </div>
 
-              <div className="mt-8">
-                <Button
-                  onClick={() => {
-                    if (time) {
-                      setStep('details');
-                      setError('');
-                    }
-                  }}
-                  disabled={!time}
-                >
-                  Continue
-                </Button>
-              </div>
-            </>
-          )}
+          <div className="mt-8">
+            <Button
+              onClick={() => {
+                if (time) {
+                  setStep('details');
+                  setError('');
+                }
+              }}
+              disabled={!time}
+            >
+              Continue
+            </Button>
+          </div>
         </div>
       )}
 
