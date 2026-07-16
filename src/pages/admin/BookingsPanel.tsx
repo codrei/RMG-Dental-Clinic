@@ -9,10 +9,11 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { Check, Loader2, Phone, StickyNote, X } from 'lucide-react';
+import { Check, Loader2, MessageSquareText, Phone, StickyNote, X } from 'lucide-react';
 import { db } from '../../lib/firebase';
 import { toDateKey } from '../../lib/booking';
 import { formatTime } from '../../lib/hours';
+import { clinic } from '../../config/clinic';
 import type { Booking } from '../../types';
 
 const longDate = new Intl.DateTimeFormat('en-PH', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -21,10 +22,33 @@ function slotIdOf(b: Booking): string {
   return `${b.date}_${b.time.replace(':', '')}`;
 }
 
+type ActionKind = 'confirmed' | 'declined' | 'cancelled';
+
+function prettyDate(b: Booking): string {
+  const [y, m, d] = b.date.split('-').map(Number);
+  return longDate.format(new Date(y, m - 1, d));
+}
+
+/** Prefilled SMS the doctor can send with one tap after acting on a booking. */
+function smsHref(b: Booking, kind: ActionKind): string {
+  const first = b.patientName.trim().split(/\s+/)[0];
+  const when = `${prettyDate(b)} at ${formatTime(b.time)}`;
+  let body: string;
+  if (kind === 'confirmed') {
+    body = `Hi ${first}! This is ${clinic.name}. Your ${b.serviceName} appointment on ${when} is CONFIRMED. See you at the clinic! If you need to reschedule, call us at ${clinic.contact.phones[0]}.`;
+  } else if (kind === 'declined') {
+    body = `Hi ${first}! This is ${clinic.name}. Sorry, we can't accommodate your ${b.serviceName} request for ${when}. Please pick another time at ${window.location.origin}/book or call us at ${clinic.contact.phones[0]}. Thank you po!`;
+  } else {
+    body = `Hi ${first}! This is ${clinic.name}. We're sorry, but we need to cancel your ${b.serviceName} appointment on ${when}. Please rebook at ${window.location.origin}/book or call us at ${clinic.contact.phones[0]}. Apologies po!`;
+  }
+  return `sms:${b.phone.replace(/[^\d+]/g, '')}?body=${encodeURIComponent(body)}`;
+}
+
 export function BookingsPanel() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [lastAction, setLastAction] = useState<{ b: Booking; kind: ActionKind } | null>(null);
 
   // Live feed of today-and-future bookings; updates by itself when a
   // patient books — no refresh needed.
@@ -48,6 +72,7 @@ export function BookingsPanel() {
     setBusyId(b.id);
     try {
       await updateDoc(doc(db, 'bookings', b.id), { status: 'confirmed' });
+      setLastAction({ b, kind: 'confirmed' });
     } finally {
       setBusyId(null);
     }
@@ -61,6 +86,7 @@ export function BookingsPanel() {
     try {
       await updateDoc(doc(db, 'bookings', b.id), { status: to });
       await deleteDoc(doc(db, 'bookedSlots', slotIdOf(b)));
+      setLastAction({ b, kind: to });
     } finally {
       setBusyId(null);
     }
@@ -76,6 +102,33 @@ export function BookingsPanel() {
 
   return (
     <div className="space-y-10">
+      {lastAction && (
+        <div className="flex flex-col gap-3 rounded-xl border border-primary/30 bg-primary-soft p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-sm">
+            <span className="font-semibold">
+              {lastAction.kind === 'confirmed' ? 'Confirmed' : lastAction.kind === 'declined' ? 'Declined' : 'Cancelled'}
+            </span>{' '}
+            {lastAction.b.patientName}&apos;s {lastAction.b.serviceName} on {prettyDate(lastAction.b)} at{' '}
+            {formatTime(lastAction.b.time)}. Let them know:
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <a
+              href={smsHref(lastAction.b, lastAction.kind)}
+              className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-fg hover:bg-primary-hover"
+            >
+              <MessageSquareText className="h-4 w-4" /> Text {lastAction.b.patientName.split(/\s+/)[0]}
+            </a>
+            <button
+              onClick={() => setLastAction(null)}
+              className="rounded-lg p-2 text-muted-foreground hover:bg-surface"
+              aria-label="Dismiss"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <section>
         <h2 className="font-serif text-xl font-semibold">
           Requests waiting for you{' '}
@@ -119,6 +172,12 @@ export function BookingsPanel() {
           <div className="mt-4 space-y-3">
             {confirmed.map((b) => (
               <BookingCard key={b.id} b={b} busy={busyId === b.id}>
+                <a
+                  href={smsHref(b, 'confirmed')}
+                  className="flex items-center gap-1.5 rounded-lg border border-primary/30 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary-soft"
+                >
+                  <MessageSquareText className="h-4 w-4" /> Text
+                </a>
                 <button
                   onClick={() => decline(b, 'cancelled')}
                   disabled={busyId === b.id}
