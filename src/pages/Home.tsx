@@ -121,18 +121,29 @@ export function Home() {
       {/* Closing CTA */}
       <section className="pb-20">
         <Container>
-          <div className="overflow-hidden rounded-3xl bg-primary px-8 py-14 text-center text-primary-fg sm:px-16">
-            <h2 className="mx-auto max-w-2xl text-3xl font-semibold text-primary-fg sm:text-4xl">
-              Ready to see us? Book your visit today.
-            </h2>
-            <p className="mx-auto mt-4 max-w-lg text-primary-fg/80">
-              Choose a time online and we&apos;ll confirm your appointment. It only takes a minute.
-            </p>
-            <div className="mt-8 flex justify-center">
-              <Button to="/book" className="bg-surface text-primary hover:bg-white">
-                <CalendarDays className="h-4 w-4" />
-                Book an appointment
-              </Button>
+          <div className="relative overflow-hidden rounded-3xl bg-primary px-8 py-14 text-center sm:px-16">
+            {/* soft sky glow, echoing the logo's swoosh */}
+            <div
+              className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/25 blur-3xl"
+              aria-hidden="true"
+            />
+            <div
+              className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-accent/15 blur-3xl"
+              aria-hidden="true"
+            />
+            <div className="relative">
+              <h2 className="mx-auto max-w-2xl text-3xl font-semibold text-white sm:text-4xl">
+                Ready to see us? Book your visit today.
+              </h2>
+              <p className="mx-auto mt-4 max-w-lg text-sky-200/90">
+                Choose a time online and we&apos;ll confirm your appointment. It only takes a minute.
+              </p>
+              <div className="mt-8 flex justify-center">
+                <Button to="/book" variant="inverted">
+                  <CalendarDays className="h-4 w-4" />
+                  Book an appointment
+                </Button>
+              </div>
             </div>
           </div>
         </Container>

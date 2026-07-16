@@ -52,12 +52,17 @@ body {
   line-height: 1.55;
 }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-serif);
-  font-optical-sizing: auto;
-  letter-spacing: -0.01em;
-  line-height: 1.12;
-  color: var(--foreground);
+/* In @layer base so Tailwind utilities (e.g. text-primary-fg on a dark
+   panel) can override the default heading color — un-layered rules would
+   silently beat every utility class. */
+@layer base {
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    letter-spacing: -0.01em;
+    line-height: 1.12;
+    color: var(--foreground);
+  }
 }
 
 /* Accessible, consistent focus ring */

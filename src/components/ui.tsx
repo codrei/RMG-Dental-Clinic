@@ -5,7 +5,7 @@ export function Container({ children, className = '' }: { children: ReactNode; c
   return <div className={`mx-auto w-full max-w-6xl px-5 sm:px-8 ${className}`}>{children}</div>;
 }
 
-type Variant = 'primary' | 'outline' | 'ghost';
+type Variant = 'primary' | 'outline' | 'ghost' | 'inverted';
 
 const base =
   'inline-flex items-center justify-center gap-2 rounded-lg font-semibold text-sm px-6 py-3 transition-colors disabled:opacity-50 disabled:pointer-events-none';
@@ -14,6 +14,8 @@ const variants: Record<Variant, string> = {
   primary: 'bg-primary text-primary-fg hover:bg-primary-hover',
   outline: 'border border-primary/30 text-primary hover:bg-primary-soft',
   ghost: 'text-foreground hover:bg-muted',
+  /* for use on dark/navy panels */
+  inverted: 'bg-white text-primary hover:bg-accent-soft',
 };
 
 interface ButtonProps {
