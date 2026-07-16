@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   runTransaction,
@@ -33,16 +34,30 @@ function toHHMM(mins: number): string {
 }
 
 /** The next `count` days on which the clinic is open at all. */
-export function upcomingOpenDays(count: number): Date[] {
+export function upcomingOpenDays(count: number, daysOff: Set<string> = new Set()): Date[] {
   const days: Date[] = [];
   const cursor = new Date();
   cursor.setHours(0, 0, 0, 0);
-  while (days.length < count) {
+  let scanned = 0;
+  while (days.length < count && scanned < count * 4) {
     const sessions = clinic.hours[DAY_KEYS[cursor.getDay()]] ?? [];
-    if (sessions.length > 0) days.push(new Date(cursor));
+    if (sessions.length > 0 && !daysOff.has(toDateKey(cursor))) days.push(new Date(cursor));
     cursor.setDate(cursor.getDate() + 1);
+    scanned++;
   }
   return days;
+}
+
+/** Dates the clinic has marked closed (settings/daysOff → { dates: string[] }). */
+export async function fetchDaysOff(): Promise<Set<string>> {
+  if (!db) return new Set();
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'daysOff'));
+    const dates = (snap.data()?.dates as string[] | undefined) ?? [];
+    return new Set(dates);
+  } catch {
+    return new Set();
+  }
 }
 
 /**

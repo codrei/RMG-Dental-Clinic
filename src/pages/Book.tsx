@@ -6,6 +6,7 @@ import { firebaseReady } from '../lib/firebase';
 import { formatTime } from '../lib/hours';
 import {
   createBooking,
+  fetchDaysOff,
   fetchTakenTimes,
   possibleStartTimes,
   toDateKey,
@@ -34,7 +35,11 @@ export function Book() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const days = useMemo(() => upcomingOpenDays(14), []);
+  const [daysOff, setDaysOff] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    fetchDaysOff().then(setDaysOff).catch(() => {});
+  }, []);
+  const days = useMemo(() => upcomingOpenDays(14, daysOff), [daysOff]);
 
   // Load taken times whenever the selected date changes.
   useEffect(() => {
