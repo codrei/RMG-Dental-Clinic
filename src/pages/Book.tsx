@@ -66,7 +66,8 @@ export function Book() {
     if (!service || !date || !time) return;
     if (patientName.trim().length < 2) return setError('Please enter your full name.');
     const digits = phone.replace(/[^\d]/g, '');
-    if (digits.length < 10) return setError('Please enter a valid mobile number (e.g. 0917 123 4567).');
+    if (!/^09\d{9}$/.test(digits))
+      return setError('Please enter a valid PH mobile number — 11 digits starting with 09 (e.g. 0917 123 4567).');
     if (!consent) return setError('Please tick the consent box so we can process your booking.');
 
     setError('');
@@ -316,10 +317,15 @@ export function Book() {
             <Field label="Mobile number *">
               <input
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => {
+                  // digits only, capped at 11, spaced as 0917 123 4567
+                  const digits = e.target.value.replace(/[^\d]/g, '').slice(0, 11);
+                  const parts = [digits.slice(0, 4), digits.slice(4, 7), digits.slice(7, 11)].filter(Boolean);
+                  setPhone(parts.join(' '));
+                }}
                 placeholder="0917 123 4567"
-                inputMode="tel"
-                maxLength={20}
+                inputMode="numeric"
+                maxLength={13}
                 className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </Field>
