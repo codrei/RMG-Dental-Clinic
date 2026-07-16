@@ -54,7 +54,7 @@ export const clinic = {
     phonePrimary: '+639175116812',
     phones: ['(0917) 511-6812', '(0917) 512-1480'],
     landline: '(043) 781-8940',
-    email: 'robmitragarcia@yahoo.com',
+    emails: ['robmitragarcia@yahoo.com', 'robgarcia228@gmail.com'],
     facebook: 'https://www.facebook.com/profile.php?id=100054419234074',
     addressLine:
       'Ground Floor, Manguiat Building, General Luna Street, Pilahan Sabang, Lipa City, 4217, Batangas',

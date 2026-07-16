@@ -31,7 +31,13 @@ export function Contact() {
           </ContactRow>
 
           <ContactRow icon={Mail} label="Email">
-            <a href={`mailto:${clinic.contact.email}`} className="hover:text-accent-ink">{clinic.contact.email}</a>
+            <div className="space-y-0.5">
+              {clinic.contact.emails.map((e) => (
+                <div key={e}>
+                  <a href={`mailto:${e}`} className="hover:text-accent-ink">{e}</a>
+                </div>
+              ))}
+            </div>
           </ContactRow>
 
           {clinic.contact.facebook && (
