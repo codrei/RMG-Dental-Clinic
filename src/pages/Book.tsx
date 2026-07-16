@@ -87,6 +87,21 @@ export function Book() {
         email: email || undefined,
         notes: notes || undefined,
       });
+      // Fire-and-forget: email the clinic about the new request. Any
+      // failure here is invisible — the booking is already saved and the
+      // dashboard shows it live regardless.
+      fetch('/api/notify-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          patientName: patientName.trim(),
+          serviceName: service.name,
+          date: toDateKey(date),
+          time,
+          phone: phone.trim(),
+          notes: notes.trim() || undefined,
+        }),
+      }).catch(() => {});
       setStep('done');
     } catch (e) {
       if (e instanceof Error && e.message === 'SLOT_TAKEN') {
