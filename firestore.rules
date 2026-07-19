@@ -1,18 +1,12 @@
 rules_version = '2';
 
-// RMG Dental Clinic — Firestore security rules
-//
-// The model:
-//  - `bookings`     PRIVATE. Patients can only CREATE (submit a request,
-//                   validated below). Only the signed-in clinic account can
-//                   read, update, or delete them.
-//  - `bookedSlots`  PUBLIC but personal-data-free ({date, time} only).
-//                   The calendar reads it to grey out taken times. Its doc
-//                   ID (`YYYY-MM-DD_HHMM`) acts as a lock: create-only means
-//                   two patients can never take the same slot. Only the
-//                   clinic can delete (freeing a slot after a decline).
-//  - `settings`     PUBLIC read (future: days off shown in the calendar),
-//                   clinic-only writes.
+// RMG Dental Clinic — SHARED Firestore rules
+// One Firebase project serves two apps:
+//   - the public booking site  (bookings / bookedSlots / settings)
+//   - the private clinic manager (patients and everything under them)
+// This file is the single source of truth. Keep the copy in BOTH repos
+// (RMG-Dental-Clinic and RMG-Clinic-Manager) identical, and publish it in
+// Firebase Console → Firestore → Rules.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -20,6 +14,8 @@ service cloud.firestore {
     function isClinic() {
       return request.auth != null;
     }
+
+    // ── Booking site ────────────────────────────────────────────────
 
     function validBooking() {
       let d = request.resource.data;
@@ -54,6 +50,18 @@ service cloud.firestore {
     match /settings/{docId} {
       allow read: if true;
       allow write: if isClinic();
+    }
+
+    // ── Clinic manager (patient records) ────────────────────────────
+    // Strictly private: no public access of any kind. Covers the patient
+    // document and every subcollection under it (dental chart, visits, …).
+
+    match /patients/{patientId} {
+      allow read, write: if isClinic();
+
+      match /{document=**} {
+        allow read, write: if isClinic();
+      }
     }
   }
 }
