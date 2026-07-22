@@ -38,6 +38,9 @@ export function Book() {
   const [address, setAddress] = useState('');
   const [emergencyName, setEmergencyName] = useState('');
   const [emergencyPhone, setEmergencyPhone] = useState('');
+  const [allergies, setAllergies] = useState('');
+  const [conditions, setConditions] = useState('');
+  const [medications, setMedications] = useState('');
   const [notes, setNotes] = useState('');
   const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -116,6 +119,9 @@ export function Book() {
         address,
         emergencyName,
         emergencyPhone,
+        allergies: allergies || undefined,
+        conditions: conditions || undefined,
+        medications: medications || undefined,
       });
       // Fire-and-forget: email the clinic about the new request. Any
       // failure here is invisible — the booking is already saved and the
@@ -494,16 +500,59 @@ export function Book() {
               </div>
             </section>
 
-            <Field label="Anything the dentist should know? (optional)">
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
-                maxLength={500}
-                placeholder="e.g. tooth pain on the lower left since Monday"
-                className={inputCls}
-              />
-            </Field>
+            {/* Medical information — optional, but it's what the dentist
+                checks before treating (allergies especially). */}
+            <section>
+              <h2 className="font-serif text-lg font-semibold">
+                Medical information <span className="text-sm font-normal text-muted-foreground">(optional)</span>
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Helps the dentist treat you safely — leave blank if none.
+              </p>
+              <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                <Field label="Allergies">
+                  <input
+                    value={allergies}
+                    onChange={(e) => setAllergies(e.target.value)}
+                    placeholder="e.g. penicillin, latex"
+                    maxLength={200}
+                    className={inputCls}
+                  />
+                </Field>
+                <Field label="Medical conditions">
+                  <input
+                    value={conditions}
+                    onChange={(e) => setConditions(e.target.value)}
+                    placeholder="e.g. hypertension, diabetes"
+                    maxLength={200}
+                    className={inputCls}
+                  />
+                </Field>
+                <div className="sm:col-span-2">
+                  <Field label="Current medications">
+                    <input
+                      value={medications}
+                      onChange={(e) => setMedications(e.target.value)}
+                      placeholder="e.g. losartan 50mg daily"
+                      maxLength={200}
+                      className={inputCls}
+                    />
+                  </Field>
+                </div>
+                <div className="sm:col-span-2">
+                  <Field label="Anything else the dentist should know?">
+                    <textarea
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      rows={3}
+                      maxLength={500}
+                      placeholder="e.g. tooth pain on the lower left since Monday"
+                      className={inputCls}
+                    />
+                  </Field>
+                </div>
+              </div>
+            </section>
 
             <div className="space-y-4">
               <label className="flex items-start gap-2.5 text-sm text-muted-foreground">

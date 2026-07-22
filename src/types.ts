@@ -37,6 +37,10 @@ export interface Booking {
   address?: string;
   emergencyName?: string;
   emergencyPhone?: string;
+  // Intake: medical history — feeds the record's medical-alerts banner
+  allergies?: string;
+  conditions?: string;
+  medications?: string;
   status: BookingStatus;
   createdAt?: Timestamp;
 }

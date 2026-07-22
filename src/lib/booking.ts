@@ -112,6 +112,9 @@ export interface NewBookingInput {
   address?: string;
   emergencyName?: string;
   emergencyPhone?: string;
+  allergies?: string;
+  conditions?: string;
+  medications?: string;
 }
 
 /**
@@ -160,6 +163,9 @@ export async function createBooking(input: NewBookingInput): Promise<string> {
       'address',
       'emergencyName',
       'emergencyPhone',
+      'allergies',
+      'conditions',
+      'medications',
     ];
     for (const key of extras) {
       const value = typeof input[key] === 'string' ? (input[key] as string).trim() : undefined;
