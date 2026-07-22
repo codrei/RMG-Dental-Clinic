@@ -25,9 +25,19 @@ export function Book() {
   const [taken, setTaken] = useState<Set<string>>(new Set());
   const [loadingSlots, setLoadingSlots] = useState(false);
 
-  const [patientName, setPatientName] = useState('');
+  // Intake details — everything the clinic needs to open a patient record,
+  // so the first visit starts in the chair, not on a clipboard.
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [middleName, setMiddleName] = useState('');
+  const [birthdate, setBirthdate] = useState('');
+  const [sex, setSex] = useState<'' | 'male' | 'female'>('');
+  const [occupation, setOccupation] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [emergencyName, setEmergencyName] = useState('');
+  const [emergencyPhone, setEmergencyPhone] = useState('');
   const [notes, setNotes] = useState('');
   const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -66,11 +76,25 @@ export function Book() {
 
   async function submit() {
     if (!service || !date || !time) return;
-    if (patientName.trim().length < 2) return setError('Please enter your full name.');
+    if (firstName.trim().length < 1 || lastName.trim().length < 1)
+      return setError('Please enter your first and last name.');
+    if (!birthdate) return setError('Please enter your birthdate.');
+    if (birthdate > toDateKey(new Date())) return setError('Your birthdate can’t be in the future.');
+    if (!sex) return setError('Please select your sex.');
     const digits = phone.replace(/[^\d]/g, '');
     if (!/^09\d{9}$/.test(digits))
       return setError('Please enter a valid PH mobile number — 11 digits starting with 09 (e.g. 0917 123 4567).');
+    if (address.trim().length < 5) return setError('Please enter your address.');
+    if (emergencyName.trim().length < 2)
+      return setError('Please enter an emergency contact person — someone we can reach if needed.');
+    if (emergencyPhone.replace(/[^\d]/g, '').length < 7)
+      return setError('Please enter your emergency contact’s phone number.');
     if (!consent) return setError('Please tick the consent box so we can process your booking.');
+
+    const patientName = [firstName, middleName, lastName]
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .join(' ');
 
     setError('');
     setSubmitting(true);
@@ -83,6 +107,15 @@ export function Book() {
         phone,
         email: email || undefined,
         notes: notes || undefined,
+        firstName,
+        lastName,
+        middleName: middleName || undefined,
+        birthdate,
+        sex,
+        occupation: occupation || undefined,
+        address,
+        emergencyName,
+        emergencyPhone,
       });
       // Fire-and-forget: email the clinic about the new request. Any
       // failure here is invisible — the booking is already saved and the
@@ -308,9 +341,11 @@ export function Book() {
         </div>
       )}
 
-      {/* STEP 3 — details */}
+      {/* STEP 3 — details (doubles as the clinic's intake form: what you
+          enter here becomes your patient record, so your first visit
+          starts in the chair, not on a clipboard) */}
       {step === 'details' && service && date && time && (
-        <div className="mt-8 max-w-xl">
+        <div className="mt-8 max-w-2xl">
           <button
             onClick={() => setStep('schedule')}
             className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground"
@@ -318,41 +353,147 @@ export function Book() {
             <ChevronLeft className="h-4 w-4" /> {longDate.format(date)}, {formatTime(time)}
           </button>
 
-          <div className="mt-5 space-y-4">
-            <Field label="Full name *">
-              <input
-                value={patientName}
-                onChange={(e) => setPatientName(e.target.value)}
-                placeholder="Juan Dela Cruz"
-                maxLength={80}
-                className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
-            </Field>
-            <Field label="Mobile number *">
-              <input
-                value={phone}
-                onChange={(e) => {
-                  // digits only, capped at 11, spaced as 0917 123 4567
-                  const digits = e.target.value.replace(/[^\d]/g, '').slice(0, 11);
-                  const parts = [digits.slice(0, 4), digits.slice(4, 7), digits.slice(7, 11)].filter(Boolean);
-                  setPhone(parts.join(' '));
-                }}
-                placeholder="0917 123 4567"
-                inputMode="numeric"
-                maxLength={13}
-                className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
-            </Field>
-            <Field label="Email (optional)">
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@email.com"
-                type="email"
-                maxLength={100}
-                className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
-            </Field>
+          <p className="mt-5 text-sm text-muted-foreground">
+            One quick form and you&apos;re done — these details set up your patient
+            record at the clinic, so there&apos;s no paperwork when you arrive.
+          </p>
+
+          <div className="mt-6 space-y-8">
+            {/* About you */}
+            <section>
+              <h2 className="font-serif text-lg font-semibold">About you</h2>
+              <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                <Field label="First name *">
+                  <input
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Juan"
+                    maxLength={60}
+                    className={inputCls}
+                  />
+                </Field>
+                <Field label="Last name *">
+                  <input
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Dela Cruz"
+                    maxLength={60}
+                    className={inputCls}
+                  />
+                </Field>
+                <Field label="Middle name (optional)">
+                  <input
+                    value={middleName}
+                    onChange={(e) => setMiddleName(e.target.value)}
+                    maxLength={60}
+                    className={inputCls}
+                  />
+                </Field>
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Sex *">
+                    <select
+                      value={sex}
+                      onChange={(e) => setSex(e.target.value as '' | 'male' | 'female')}
+                      className={inputCls}
+                    >
+                      <option value="">—</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </Field>
+                  <Field label="Birthdate *">
+                    <input
+                      type="date"
+                      value={birthdate}
+                      max={toDateKey(new Date())}
+                      onChange={(e) => setBirthdate(e.target.value)}
+                      className={inputCls}
+                    />
+                  </Field>
+                </div>
+                <Field label="Occupation (optional)">
+                  <input
+                    value={occupation}
+                    onChange={(e) => setOccupation(e.target.value)}
+                    maxLength={80}
+                    className={inputCls}
+                  />
+                </Field>
+              </div>
+            </section>
+
+            {/* Contact */}
+            <section>
+              <h2 className="font-serif text-lg font-semibold">Contact</h2>
+              <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                <Field label="Mobile number *">
+                  <input
+                    value={phone}
+                    onChange={(e) => {
+                      // digits only, capped at 11, spaced as 0917 123 4567
+                      const digits = e.target.value.replace(/[^\d]/g, '').slice(0, 11);
+                      const parts = [digits.slice(0, 4), digits.slice(4, 7), digits.slice(7, 11)].filter(Boolean);
+                      setPhone(parts.join(' '));
+                    }}
+                    placeholder="0917 123 4567"
+                    inputMode="numeric"
+                    maxLength={13}
+                    className={inputCls}
+                  />
+                </Field>
+                <Field label="Email (optional)">
+                  <input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@email.com"
+                    type="email"
+                    maxLength={100}
+                    className={inputCls}
+                  />
+                </Field>
+                <div className="sm:col-span-2">
+                  <Field label="Address *">
+                    <input
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="House no., street, barangay, city"
+                      maxLength={200}
+                      className={inputCls}
+                    />
+                  </Field>
+                </div>
+              </div>
+            </section>
+
+            {/* Emergency contact */}
+            <section>
+              <h2 className="font-serif text-lg font-semibold">Emergency contact</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Someone the clinic can reach if ever needed during treatment.
+              </p>
+              <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                <Field label="Contact person *">
+                  <input
+                    value={emergencyName}
+                    onChange={(e) => setEmergencyName(e.target.value)}
+                    placeholder="e.g. Maria Dela Cruz (spouse)"
+                    maxLength={80}
+                    className={inputCls}
+                  />
+                </Field>
+                <Field label="Contact number *">
+                  <input
+                    value={emergencyPhone}
+                    onChange={(e) => setEmergencyPhone(e.target.value)}
+                    placeholder="0917 123 4567"
+                    inputMode="tel"
+                    maxLength={20}
+                    className={inputCls}
+                  />
+                </Field>
+              </div>
+            </section>
+
             <Field label="Anything the dentist should know? (optional)">
               <textarea
                 value={notes}
@@ -360,40 +501,46 @@ export function Book() {
                 rows={3}
                 maxLength={500}
                 placeholder="e.g. tooth pain on the lower left since Monday"
-                className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className={inputCls}
               />
             </Field>
 
-            <label className="flex items-start gap-2.5 text-sm text-muted-foreground">
-              <input
-                type="checkbox"
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-                className="mt-0.5 h-4 w-4 accent-[#26365f]"
-              />
-              I agree that {clinic.name} uses these details only to manage my appointment.
-            </label>
+            <div className="space-y-4">
+              <label className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 accent-[#26365f]"
+                />
+                I agree that {clinic.name} uses these details only to manage my
+                appointment and patient record.
+              </label>
 
-            <Button onClick={submit} disabled={submitting} className="w-full sm:w-auto">
-              {submitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Sending…
-                </>
-              ) : (
-                <>
-                  <CalendarDays className="h-4 w-4" /> Request this appointment
-                </>
-              )}
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              The clinic confirms every request personally — you&apos;ll get a call or text at the number above.
-            </p>
+              <Button onClick={submit} disabled={submitting} className="w-full sm:w-auto">
+                {submitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" /> Sending…
+                  </>
+                ) : (
+                  <>
+                    <CalendarDays className="h-4 w-4" /> Request this appointment
+                  </>
+                )}
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                The clinic confirms every request personally — you&apos;ll get a call or text at the number above.
+              </p>
+            </div>
           </div>
         </div>
       )}
     </Container>
   );
 }
+
+const inputCls =
+  'w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40';
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (

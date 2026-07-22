@@ -102,6 +102,16 @@ export interface NewBookingInput {
   phone: string;
   email?: string;
   notes?: string;
+  // Intake details — flow into the clinic's patient record on first visit.
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  birthdate?: string;
+  sex?: 'male' | 'female';
+  occupation?: string;
+  address?: string;
+  emergencyName?: string;
+  emergencyPhone?: string;
 }
 
 /**
@@ -137,10 +147,24 @@ export async function createBooking(input: NewBookingInput): Promise<string> {
       status: 'pending',
       createdAt: serverTimestamp(),
     };
-    const email = input.email?.trim();
-    const notes = input.notes?.trim();
-    if (email) (booking as Record<string, unknown>).email = email;
-    if (notes) (booking as Record<string, unknown>).notes = notes;
+    // Optional fields are only written when filled, keeping documents tidy.
+    const extras: (keyof NewBookingInput)[] = [
+      'email',
+      'notes',
+      'firstName',
+      'lastName',
+      'middleName',
+      'birthdate',
+      'sex',
+      'occupation',
+      'address',
+      'emergencyName',
+      'emergencyPhone',
+    ];
+    for (const key of extras) {
+      const value = typeof input[key] === 'string' ? (input[key] as string).trim() : undefined;
+      if (value) (booking as Record<string, unknown>)[key] = value;
+    }
 
     tx.set(bookingRef, booking);
   });

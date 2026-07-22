@@ -5,6 +5,11 @@ export type BookingStatus = 'pending' | 'confirmed' | 'declined' | 'cancelled';
 /**
  * A booking request. Lives in the private `bookings` collection —
  * only the signed-in clinic account can read these (see firestore.rules).
+ *
+ * Besides the appointment itself it carries the patient's intake details
+ * (personal, contact, emergency contact) so the clinic manager can create
+ * a complete patient record with one tap — no retyping at the clinic.
+ * The structured fields are optional so older bookings stay valid.
  */
 export interface Booking {
   id?: string;
@@ -15,10 +20,23 @@ export interface Booking {
   date: string;
   /** "09:00" (24h clinic time) */
   time: string;
+  /** Joined display name — kept for the admin dashboard and SMS templates. */
   patientName: string;
   phone: string;
   email?: string;
   notes?: string;
+  // Intake: personal
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  /** "1990-05-21" */
+  birthdate?: string;
+  sex?: 'male' | 'female';
+  occupation?: string;
+  // Intake: contact & emergency
+  address?: string;
+  emergencyName?: string;
+  emergencyPhone?: string;
   status: BookingStatus;
   createdAt?: Timestamp;
 }
