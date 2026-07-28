@@ -7,9 +7,8 @@ export function About() {
   return (
     <Container className="py-16">
       <div className="grid items-start gap-12 lg:grid-cols-2">
-        <div className="rise-in relative mx-auto w-full max-w-md">
-          <div className="pointer-events-none absolute -left-6 -top-6 h-24 w-24 rounded-full bg-accent/20" aria-hidden="true" />
-          <div className="aspect-[4/5] overflow-hidden rounded-3xl border border-border bg-primary-soft shadow-sm">
+        <div className="rise-in mx-auto w-full max-w-md">
+          <div className="aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-primary-soft">
             <img
               src={clinic.dentist.photo}
               alt={`${clinic.dentist.name}, ${clinic.dentist.credentials}`}

@@ -28,7 +28,7 @@ const weekdaySessions: Session[] = [
 export const clinic = {
   name: 'RMG Dental Clinic',
   shortName: 'RMG',
-  tagline: 'Gentle, modern dental care in Lipa City.',
+  tagline: 'General Luna Street, Lipa City',
 
   logo: {
     icon: '/images/logo-icon.png', // tooth mark only
@@ -41,12 +41,14 @@ export const clinic = {
     license: 'PRC License No. 037970',
     specialties: ['Family Dentistry', 'Orthodontics', 'Oral Surgery'],
     photo: '/images/dentist.webp',
-    // TODO: replace with the dentist's own words when available.
+    // Facts only — everything here is verifiable (PRC registry, the clinic's
+    // own listing). Swap in Dr. Garcia's own words whenever he provides them;
+    // never invent claims about the practice on his behalf.
     bio:
-      'Dr. Robert Mitra Garcia leads RMG Dental Clinic with a calm, ' +
-      'patient-first approach — from routine check-ups and cleanings to ' +
-      'braces and oral surgery. Every visit is unhurried, gentle, and built ' +
-      'around your comfort. (Placeholder bio — to be confirmed with the dentist.)',
+      'Dr. Robert Mitra Garcia is a licensed dentist (PRC No. 037970) ' +
+      'practising at RMG Dental Clinic on General Luna Street, Lipa City. ' +
+      'His work covers family dentistry, orthodontics, and oral surgery — ' +
+      'from check-ups and cleanings to braces and extractions.',
   },
 
   contact: {
@@ -80,43 +82,44 @@ export const clinic = {
   // Length of each bookable slot, in minutes.
   slotMinutes: 30,
 
-  // TODO: confirm the exact service list + prices with the dentist.
-  // These map to the clinic's stated focus (family dentistry, orthodontics, oral surgery).
+  // TODO: confirm the exact service list, durations, and prices with the dentist.
+  // Descriptions state plainly what each procedure IS — no marketing claims
+  // about the practice that can't be verified.
   services: [
     {
       slug: 'consultation',
       name: 'Consultation & Check-up',
-      description: 'Full oral exam, assessment, and a personalised treatment plan.',
+      description: 'Oral examination and assessment, with a treatment plan if you need one.',
       durationMinutes: 30,
     },
     {
       slug: 'cleaning',
       name: 'Cleaning (Oral Prophylaxis)',
-      description: 'Professional cleaning and tartar removal for healthy gums.',
+      description: 'Removal of plaque and tartar build-up.',
       durationMinutes: 45,
     },
     {
       slug: 'filling',
       name: 'Tooth Filling / Restoration',
-      description: 'Repair a cavity or a chipped tooth and restore your bite.',
+      description: 'Repair for a cavity or a chipped tooth.',
       durationMinutes: 45,
     },
     {
       slug: 'extraction',
       name: 'Tooth Extraction / Oral Surgery',
-      description: 'Safe, gentle removal of a damaged or impacted tooth.',
+      description: 'Removal of a damaged, loose, or impacted tooth.',
       durationMinutes: 45,
     },
     {
       slug: 'braces',
       name: 'Braces & Orthodontics',
-      description: 'Consultation and fitting for braces to straighten your smile.',
+      description: 'Assessment and fitting for orthodontic treatment.',
       durationMinutes: 30,
     },
     {
       slug: 'whitening',
       name: 'Teeth Whitening',
-      description: 'Brighten your smile with professional whitening.',
+      description: 'In-clinic whitening treatment.',
       durationMinutes: 60,
     },
   ] as Service[],
