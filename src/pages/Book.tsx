@@ -100,6 +100,11 @@ export function Book() {
       .join(' ');
 
     setError('');
+    // Preview mode: nothing is saved or sent, so no real patient is left waiting on a clinic that never saw the request.
+    if (clinic.previewMode) {
+      setStep('done');
+      return;
+    }
     setSubmitting(true);
     try {
       await createBooking({
@@ -182,7 +187,7 @@ export function Book() {
           <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-primary-soft text-primary">
             <PartyPopper className="h-7 w-7" />
           </div>
-          <h1 className="mt-6 text-3xl font-semibold">Request received!</h1>
+          <h1 className="mt-6 text-3xl font-semibold">{clinic.previewMode ? 'This is a preview' : 'Request received!'}</h1>
           <p className="mt-3 text-muted-foreground">
             {service && date && time && (
               <>
@@ -192,11 +197,18 @@ export function Book() {
               </>
             )}
           </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Your appointment is <span className="font-semibold text-foreground">pending confirmation</span> — the
-            clinic will contact you at your number to confirm. If you need to change anything, just call{' '}
-            {clinic.contact.phones[0]}.
-          </p>
+          {clinic.previewMode ? (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Online booking isn&apos;t open yet, so this request was not sent to the clinic. To book, call{' '}
+              {clinic.contact.phones[0]}.
+            </p>
+          ) : (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Your appointment is <span className="font-semibold text-foreground">pending confirmation</span> — the
+              clinic will contact you at your number to confirm. If you need to change anything, just call{' '}
+              {clinic.contact.phones[0]}.
+            </p>
+          )}
           <div className="mt-8">
             <Button to="/">Back to home</Button>
           </div>
@@ -578,7 +590,9 @@ export function Book() {
                 )}
               </Button>
               <p className="text-xs text-muted-foreground">
-                The clinic confirms every request personally — you&apos;ll get a call or text at the number above.
+                {clinic.previewMode
+                  ? 'Preview only: requests are not sent to the clinic yet.'
+                  : 'The clinic confirms every request personally — you’ll get a call or text at the number above.'}
               </p>
             </div>
           </div>

@@ -28,6 +28,9 @@ const weekdaySessions: Session[] = [
 export const clinic = {
   name: 'RMG Dental Clinic',
   shortName: 'RMG',
+  // The clinic hasn't launched online booking yet. While this is true the site
+  // shows a preview banner and booking requests are not saved or sent anywhere.
+  previewMode: true,
   tagline: 'General Luna Street, Lipa City',
 
   logo: {

@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { PreviewBanner } from './PreviewBanner';
 
 export function Layout() {
   return (
@@ -11,6 +12,7 @@ export function Layout() {
       >
         Skip to content
       </a>
+      <PreviewBanner />
       <Navbar />
       <main id="main" className="flex-1">
         <Outlet />
