@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { CalendarDays, Check, ChevronLeft, Clock, Loader2, Phone, PartyPopper } from 'lucide-react';
+import { CalendarDays, Check, ChevronLeft, Clock, Info, Loader2, Phone, PartyPopper } from 'lucide-react';
 import { Container, Button, Eyebrow } from '../components/ui';
 import { clinic, type Service } from '../config/clinic';
 import { firebaseReady } from '../lib/firebase';
@@ -185,7 +185,7 @@ export function Book() {
       <Container className="py-16">
         <div className="mx-auto max-w-lg rounded-2xl border border-border bg-surface p-10 text-center">
           <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-primary-soft text-primary">
-            <PartyPopper className="h-7 w-7" />
+            {clinic.previewMode ? <Info className="h-7 w-7" /> : <PartyPopper className="h-7 w-7" />}
           </div>
           <h1 className="mt-6 text-3xl font-semibold">{clinic.previewMode ? 'This is a preview' : 'Request received!'}</h1>
           <p className="mt-3 text-muted-foreground">

@@ -51,12 +51,21 @@ export function Footer() {
       <div className="border-t border-border">
         <Container className="flex flex-col items-center justify-between gap-2 py-4 text-xs text-muted-foreground sm:flex-row">
           <span>© {new Date().getFullYear()} {clinic.name}. All rights reserved.</span>
-          <span>
-            Have a toothache?{' '}
-            <Link to="/book" className="font-medium text-accent-ink hover:underline">
-              Book online anytime
-            </Link>
-          </span>
+          {clinic.previewMode ? (
+            <span>
+              Have a toothache? Call{' '}
+              <a href={`tel:${clinic.contact.phones[0].replace(/\D/g, '')}`} className="font-medium text-accent-ink hover:underline">
+                {clinic.contact.phones[0]}
+              </a>
+            </span>
+          ) : (
+            <span>
+              Have a toothache?{' '}
+              <Link to="/book" className="font-medium text-accent-ink hover:underline">
+                Book online anytime
+              </Link>
+            </span>
+          )}
         </Container>
       </div>
     </footer>
